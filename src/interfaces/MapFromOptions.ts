@@ -1,4 +1,4 @@
-export interface MapFromOptions {
-    mapFrom?: Function;
+export interface MapFromOptions<TSource> {
     destinationValueTypeProvider?(): Function;
+    mapFrom?(src: TSource): any;
 }

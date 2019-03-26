@@ -15,8 +15,12 @@ export class Mapper {
         }
 
         // Start with metadata to get rules and keys for properties that are not defined.
-        const destinationRules: PropMappingRule[] =
+        let destinationRules: PropMappingRule[] =
             Reflect.getMetadata(SYMBOL_PROP_MAPPING_RULES, (destination as Object).constructor);
+
+        if (!destinationRules) {
+            destinationRules = [];
+        }
 
         // Add properties on the source object that are not defined in metadata.
         for (const sourceKey of Object.keys(source)) {
@@ -46,8 +50,12 @@ export class Mapper {
         }
 
         // Get source rules as well.
-        const sourceRules: PropMappingRule[] =
+        let sourceRules: PropMappingRule[] =
             Reflect.getMetadata(SYMBOL_PROP_MAPPING_RULES, (source as Object).constructor);
+
+        if (!sourceRules) {
+            sourceRules = [];
+        }
 
         for (const destinationKey of Object.keys(destination)) {
             // TODO: Needed?
@@ -100,13 +108,25 @@ export class Mapper {
 
             // Now we can map the property.
             // First, see if there are custom mapping options.
-            let mappingOptions: MapFromOptions = null;
+            let mappingOptions: MapFromOptions<TSource> = null;
 
             if (mappingRuleIndex >= 0) {
                 mappingOptions = destinationRules[mappingRuleIndex].mapFromOptions;
             }
 
             let mappedValue: any = source[destinationKey];
+
+            // If no value exists from which to be mapped, skip.
+            if (mappedValue === undefined) {
+                continue;
+            }
+
+            // If null, set explicit null value and then skip.
+            if (mappedValue === null) {
+                destination[destinationKey] = null;
+
+                continue;
+            }
 
             if (mappingOptions) {
                 if (mappingOptions.mapFrom) {

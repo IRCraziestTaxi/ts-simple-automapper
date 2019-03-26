@@ -10,11 +10,11 @@ import { ClassType } from "../types/ClassType";
  */
 export const MapFrom: <TSource>(
     sourceTypeProvider: () => ClassType<TSource>,
-    options?: MapFromOptions
+    options?: MapFromOptions<TSource>
 ) => PropertyDecorator =
     <TSource>(
         sourceTypeProvider: () => ClassType<TSource>,
-        options: MapFromOptions = null
+        options: MapFromOptions<TSource> = null
     ) => {
         return (target: Object, propKey: string | symbol) => {
             const classDef = target.constructor;
