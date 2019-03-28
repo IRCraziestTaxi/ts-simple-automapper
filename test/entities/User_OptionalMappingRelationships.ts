@@ -1,9 +1,5 @@
-import { UserProfile } from "./UserProfile";
-import { Hide } from "../../../src/decorators/Hide";
-
 // tslint:disable-next-line: class-name
 export class User_OptionalMappingRelationships {
-    @Hide()
     public hideThisPropFromAll: string;
 
     public hideThisPropFromOne: string;
@@ -13,8 +9,6 @@ export class User_OptionalMappingRelationships {
     public ignoreThisPropFromOne: string;
 
     public password: string;
-
-    public profile: UserProfile;
 
     public username: string;
 }

@@ -1,4 +1,4 @@
-import { Hide } from "../../../src/decorators/Hide";
+import { Hide } from "../../src/decorators/Hide";
 import { UserDto_OptionalMappingRelationships } from "../DTOs/UserDto_OptionalMappingRelationships";
 import { UserProfile } from "./UserProfile";
 

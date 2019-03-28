@@ -1,4 +1,4 @@
-import { MapProp } from "../../../src/decorators/MapProp";
+import { MapProp } from "../../src/decorators/MapProp";
 
 export class UserStatusDto {
     @MapProp()

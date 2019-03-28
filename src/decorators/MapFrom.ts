@@ -1,3 +1,5 @@
+import "reflect-metadata";
+
 import { SYMBOL_PROP_MAPPING_RULES } from "../constants/DecoratorConstants";
 import { MapFromOptions } from "../interfaces/MapFromOptions";
 import { PropMappingRule } from "../interfaces/PropMappingRule";

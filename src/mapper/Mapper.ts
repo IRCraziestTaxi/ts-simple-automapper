@@ -1,3 +1,5 @@
+import "reflect-metadata";
+
 import { SYMBOL_PROP_MAPPING_RULES } from "../constants/DecoratorConstants";
 import { MapFromOptions } from "../interfaces/MapFromOptions";
 import { PropMappingRule } from "../interfaces/PropMappingRule";
@@ -22,15 +24,15 @@ export class Mapper {
             destinationRules = [];
         }
 
-        // Add properties on the source object that are not defined in metadata.
-        for (const sourceKey of Object.keys(source)) {
+        // Add properties on the destination object that are not defined in metadata.
+        for (const destinationKey of Object.keys(destination)) {
             // TODO: Needed?
-            // if (!source.hasOwnProperty(propKey)) {
+            // if (!destination.hasOwnProperty(propKey)) {
             //     continue;
             // }
 
             // If property is already in our rules, skip it.
-            const ruleIndex = destinationRules.findIndex(r => r.propName === sourceKey);
+            const ruleIndex = destinationRules.findIndex(r => r.propName === destinationKey);
 
             if (ruleIndex >= 0) {
                 continue;
@@ -40,7 +42,7 @@ export class Mapper {
             // TODO
 
             destinationRules.push({
-                propName: sourceKey
+                propName: destinationKey
             });
         }
 
@@ -57,7 +59,18 @@ export class Mapper {
             sourceRules = [];
         }
 
-        for (const destinationKey of Object.keys(destination)) {
+        // Get list of props to map from our new list of destination rules.
+        // More than one rule may have been defined for a destination property.
+        // Do not duplicate keys in the list of keys to iterate.
+        const destinationKeys: string[] = [];
+
+        for (const destinationRule of destinationRules) {
+            if (destinationKeys.indexOf(destinationRule.propName) === -1) {
+                destinationKeys.push(destinationRule.propName);
+            }
+        }
+
+        for (const destinationKey of destinationKeys) {
             // TODO: Needed?
             // if (!destination.hasOwnProperty(destinationKey)) {
             //     continue;
@@ -80,10 +93,12 @@ export class Mapper {
             const propIgnored = destinationRules.findIndex(r =>
                 r.propName === destinationKey
                 && r.ignore
+                && !r.sourceTypeProvider
             ) >= 0;
             // Check if mapped for this source type. Save the index to use the rule later if needed.
             const mappingRuleIndex = destinationRules.findIndex(r =>
                 r.propName === destinationKey
+                && !r.ignore
                 && !!r.sourceTypeProvider
                 && r.sourceTypeProvider().prototype === (source as Object).constructor.prototype
             );
@@ -97,8 +112,11 @@ export class Mapper {
             // Check if property is hidden by source type.
             const hidden = sourceRules.findIndex(r =>
                 r.propName === destinationKey
-                && !r.destinationTypeProvider
-                || r.destinationTypeProvider().prototype === (destination as Object).constructor.prototype
+                && r.hide
+                && (
+                    !r.destinationTypeProvider
+                    || r.destinationTypeProvider().prototype === (destination as Object).constructor.prototype
+                )
             ) >= 0;
 
             // If hidden in general or from this destination type, skip.
@@ -116,34 +134,24 @@ export class Mapper {
 
             let mappedValue: any = source[destinationKey];
 
-            // If no value exists from which to be mapped, skip.
-            if (mappedValue === undefined) {
-                continue;
-            }
-
-            // If null, set explicit null value and then skip.
-            if (mappedValue === null) {
-                destination[destinationKey] = null;
-
-                continue;
-            }
-
             if (mappingOptions) {
                 if (mappingOptions.mapFrom) {
-                    mappedValue = mappingOptions.mapFrom(mappedValue);
+                    mappedValue = mappingOptions.mapFrom(source);
                 }
 
                 // If a destinationValueTypeProvider was specified,
                 // then the source and destination types are both class instances
                 // and the destination should be mapped accordingly.
                 if (mappingOptions.destinationValueTypeProvider) {
-                    const mapTo = new mappingOptions.destinationValueTypeProvider.prototype();
+                    const mapTo = new (mappingOptions.destinationValueTypeProvider() as { new(): any; })();
                     mappedValue = this.map(mappedValue, mapTo);
                 }
             }
 
             destination[destinationKey] = mappedValue;
         }
+
+        return destination;
     }
 
     public mapList<TSource, TDestination>(
@@ -156,15 +164,4 @@ export class Mapper {
 
         return sourceList.map(s => this.map(s, new destinationType()));
     }
-
-    // private constructorTypesMatch<TSource, TDestination>(
-    //     sourceType: ClassType<TSource>,
-    //     destinationType: ClassType<TDestination>
-    // ): boolean {
-    //     return sourceType.prototype === destinationType.prototype;
-    // }
-
-    // private objectTypesMatch<TSource, TDestination>(source: TSource, destination: TDestination): boolean {
-    //     return this.constructorTypesMatch((source as Object).constructor, (destination as Object).constructor);
-    // }
 }
