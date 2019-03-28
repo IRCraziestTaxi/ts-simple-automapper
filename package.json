@@ -1,11 +1,17 @@
 {
   "name": "ts-simple-automapper",
-  "version": "1.0.0-alphpa.1",
+  "version": "1.0.0",
   "description": "A simple AutoMapper implementation using property decorators.",
   "main": "dist/index.js",
+  "files": [
+    "dist",
+    "LICENSE",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "test": "jasmine-ts \"./tsconfig.spec.json\" --config=\"./test/jasmine.json\"",
-    "tsc": "tsc -d"
+    "tsc": "tsc -d --project \"./tsconfig.build.json\""
   },
   "repository": {
     "type": "git",
