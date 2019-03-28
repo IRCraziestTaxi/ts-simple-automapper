@@ -36,8 +36,11 @@ The `Mapper` class processes existing keys on the destination object along with 
 ```ts
 import { Mapper } from "ts-simple-automapper";
 
-const user = new User();
-const userDto = new Mapper().map(user, new UserDto());
+const user: User;
+const userDto: UserDto = new Mapper().map(user, new UserDto());
+
+const users: User[];
+const userDtos: UserDto[] = new Mapper().mapList(users, UserDto);
 ```
 
 ## Decorators
