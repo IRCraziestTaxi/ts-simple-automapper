@@ -170,4 +170,15 @@ describe("Mapper", () => {
         expect(badMapping)
             .toBeUndefined();
     });
+
+    it("ignores functions", () => {
+        const mapped = mapper.map(user, new UserDto());
+
+        expect(mapped.getterTest)
+            .not
+            .toBe(user.getterTest);
+        expect(mapped.functionTest())
+            .not
+            .toBe(user.functionTest());
+    });
 });

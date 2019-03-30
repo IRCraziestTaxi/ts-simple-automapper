@@ -20,4 +20,12 @@ export class User {
     public profile: UserProfile;
 
     public username: string;
+
+    public get getterTest(): boolean {
+        return false;
+    }
+
+    public functionTest(): boolean {
+        return false;
+    }
 }

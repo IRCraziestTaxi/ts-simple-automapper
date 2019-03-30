@@ -38,9 +38,6 @@ export class Mapper {
                 continue;
             }
 
-            // If a function, ignore.
-            // TODO
-
             destinationRules.push({
                 propName: destinationKey
             });
