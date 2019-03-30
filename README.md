@@ -34,11 +34,20 @@ console.log(userDto.username);
 The `Mapper` class processes existing keys on the destination object along with property mapping rules set up for source and destination objects via decorators.
 
 ```ts
+class UserDto {
+    @MapProp()
+    public username: string;
+}
+
 import { Mapper } from "ts-simple-automapper";
 
 const user: User;
 const userDto: UserDto = new Mapper().map(user, new UserDto());
 
+// Results in the value of user.username.
+console.log(userDto.username);
+
+// Map an array of source objects to an array of destination objects.
 const users: User[];
 const userDtos: UserDto[] = new Mapper().mapList(users, UserDto);
 ```
@@ -62,7 +71,13 @@ class DestinationType {
 
     // Ignored for only IgnoredSourceType.
     @Ignore(() => IgnoredSourceType)
-    public ignoreForIgnoredSourceType: string;
+    public ignoreForOneSourceType: string;
+
+    // Ignored for only IgnoredSourceType
+    // and OtherIgnoredSourceType.
+    @Ignore(() => IgnoredSourceType)
+    @Ignore(() => OtherIgnoredSourceType)
+    public ignoreForTwoSourceTypes: string;
 
     // Ignored for all source types except for AllowedSourceType.
     @Ignore()

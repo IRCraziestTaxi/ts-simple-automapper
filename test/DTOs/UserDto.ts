@@ -31,4 +31,12 @@ export class UserDto {
 
     @MapProp()
     public username: string;
+
+    public get getterTest(): boolean {
+        return true;
+    }
+
+    public functionTest(): boolean {
+        return true;
+    }
 }
