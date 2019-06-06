@@ -53,6 +53,8 @@ const userDtos: UserDto[] = new Mapper().mapList(users, UserDto);
 ```
 
 ## Decorators
+
+### Destination Decorators
 For mapping values TO a property on the destination object FROM the corresponding property on the source object (or a custom mapping function), use the following decorators:
 
 * `@MapProp()`: Expose the property for mapping from a source object.
@@ -138,6 +140,60 @@ class UserStatusDto {
 }
 ```
 
+### Mapping Arrays using @MapFrom
+Note that, when using the `@MapFrom()` decorator with a specified `destinationValueTypeProvider`, `Mapper` will map the object normally if the source value is not an array and will use `mapList` to map an array of objects of the specified destination type if the source value is an array.
+
+```ts
+class User {
+    public attributes: UserAttribute[];
+    public profile: UserProfile;
+}
+
+class UserProfile {
+    public name: string;
+    public user: User;
+}
+
+class UserAttribute {
+    public attribute: string;
+    public user: User;
+}
+
+class UserDto {
+    @MapFrom(() => User, {
+        destinationValueTypeProvider: () => UserAttributeDto
+    })
+    public attributes: UserAttributeDto[];
+
+    @MapFrom(() => User, {
+        destinationValueTypeProvider: () => UserProfileDto
+    })
+    public profile: UserProfileDto;
+}
+
+class UserProfileDto {
+    @MapProp()
+    public name: string;
+}
+
+class UserAttributeDto {
+    @MapProp()
+    public attribute: string;
+}
+
+// Given an existing User entity with all relationships included
+// with an existing profile and at least one attribute:
+const userDto = new Mapper().map(user, new UserDto());
+
+// Logs true since user.profile was not an array, so mapList was not used.
+console.log(userDto.profile instanceof UserProfileDto);
+// Logs true since user.attributes was an array, so mapList was used.
+console.log(userDto.attributes instanceof Array);
+// Logs true as well; the desired class type constructor is used for arrays.
+console.log(userDto.attributes[0] instanceof UserAttributeDto);
+```
+
+### Source Decorators
 To skip mapping a value FROM a property on the source object TO the corresponding property on the destination object, use the `@Hide()` decorator with an optional class type provider that hides the property only from the specified destination class type.
 
 ```ts

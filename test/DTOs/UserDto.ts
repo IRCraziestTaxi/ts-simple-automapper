@@ -2,10 +2,16 @@ import { Ignore } from "../../src/decorators/Ignore";
 import { MapFrom } from "../../src/decorators/MapFrom";
 import { MapProp } from "../../src/decorators/MapProp";
 import { User } from "../entities/User";
+import { UserAttributeDto } from "./UserAttributeDto";
 import { UserProfileDto } from "./UserProfileDto";
 import { UserStatusDto } from "./UserStatusDto";
 
 export class UserDto {
+    @MapFrom(() => User, {
+        destinationValueTypeProvider: () => UserAttributeDto
+    })
+    public attributes: UserAttributeDto[];
+
     @MapProp()
     public hideThisPropFromAll: string;
 

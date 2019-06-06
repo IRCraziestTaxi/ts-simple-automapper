@@ -140,8 +140,14 @@ export class Mapper {
                 // then the source and destination types are both class instances
                 // and the destination should be mapped accordingly.
                 if (mappingOptions.destinationValueTypeProvider) {
-                    const mapTo = new (mappingOptions.destinationValueTypeProvider() as { new(): any; })();
-                    mappedValue = this.map(mappedValue, mapTo);
+                    const mapToConstructor = mappingOptions.destinationValueTypeProvider() as { new(): any; };
+
+                    if (mappedValue instanceof Array) {
+                        mappedValue = this.mapList(mappedValue, mapToConstructor);
+                    }
+                    else {
+                        mappedValue = this.map(mappedValue, new mapToConstructor());
+                    }
                 }
             }
 

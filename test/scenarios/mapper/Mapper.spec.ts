@@ -1,11 +1,12 @@
 import "reflect-metadata";
-
 import { Mapper } from "../../../src/mapper/Mapper";
+import { UserAttributeDto } from "../../DTOs/UserAttributeDto";
 import { UserDto } from "../../DTOs/UserDto";
 import { UserDto_OptionalMappingRelationships } from "../../DTOs/UserDto_OptionalMappingRelationships";
 import { UserProfileDto } from "../../DTOs/UserProfileDto";
 import { UserStatusDto } from "../../DTOs/UserStatusDto";
 import { User } from "../../entities/User";
+import { UserAttribute } from "../../entities/UserAttribute";
 import { UserProfile } from "../../entities/UserProfile";
 import { UserStatus } from "../../entities/UserStatus";
 import { User_OptionalMappingRelationships } from "../../entities/User_OptionalMappingRelationships";
@@ -33,6 +34,16 @@ function getUser(): User {
     profile.status = status;
 
     user.profile = profile;
+
+    const attribute1 = new UserAttribute();
+    attribute1.attribute = "Attribute One";
+    attribute1.user = user;
+
+    const attribute2 = new UserAttribute();
+    attribute2.attribute = "Attribute Two";
+    attribute2.user = user;
+
+    user.attributes = [attribute1, attribute2];
 
     return user;
 }
@@ -156,7 +167,7 @@ describe("Mapper", () => {
             .toBe(true);
     });
 
-    it("maps colletions with correct types for destinations", () => {
+    it("maps collections with correct types for destinations", () => {
         const collection = [getUser(), getUser(), getUser()];
 
         const mappedCollection = mapper.mapList(collection, UserDto);
@@ -166,6 +177,18 @@ describe("Mapper", () => {
             || !(m.profile instanceof UserProfileDto)
             || !(m.status instanceof UserStatusDto)
         ));
+
+        expect(badMapping)
+            .toBeUndefined();
+    });
+
+    it("maps collections for specified destination types", () => {
+        const mapped = mapper.map(user, new UserDto());
+
+        expect(mapped.attributes instanceof Array)
+            .toBe(true);
+
+        const badMapping = mapped.attributes.find(a => !(a instanceof UserAttributeDto));
 
         expect(badMapping)
             .toBeUndefined();

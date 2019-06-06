@@ -1,8 +1,11 @@
 import { Hide } from "../../src/decorators/Hide";
 import { UserDto_OptionalMappingRelationships } from "../DTOs/UserDto_OptionalMappingRelationships";
+import { UserAttribute } from "./UserAttribute";
 import { UserProfile } from "./UserProfile";
 
 export class User {
+    public attributes: UserAttribute[];
+
     @Hide()
     public hideThisPropFromAll: string;
 
