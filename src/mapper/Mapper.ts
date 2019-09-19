@@ -5,10 +5,8 @@ import { MapFromOptions } from "../interfaces/MapFromOptions";
 import { PropMappingRule } from "../interfaces/PropMappingRule";
 import { ClassType } from "../types/ClassType";
 
-type Indexable = { [key: string]: any; };
-
 export class Mapper {
-    public map<TSource extends Indexable, TDestination extends Indexable>(
+    public map<TSource extends Record<string, any>, TDestination extends Record<string, any>>(
         source: TSource,
         destination: TDestination
     ): TDestination {
@@ -151,7 +149,10 @@ export class Mapper {
                 }
             }
 
-            destination[destinationKey] = mappedValue;
+            // wtf, typescript?
+            // https://github.com/microsoft/TypeScript/issues/31661
+            // destination[destinationKey] = mappedValue;
+            (destination as Record<string, any>)[destinationKey] = mappedValue;
         }
 
         return destination;

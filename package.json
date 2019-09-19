@@ -1,6 +1,6 @@
 {
   "name": "ts-simple-automapper",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple AutoMapper implementation using property decorators.",
   "main": "dist/index.js",
   "files": [
@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "test": "jasmine-ts \"./tsconfig.spec.json\" --config=\"./test/jasmine.json\"",
-    "tsc": "tsc -d --project \"./tsconfig.build.json\""
+    "tsc": "node_modules/.bin/tsc -d --project \"./tsconfig.build.json\""
   },
   "repository": {
     "type": "git",
@@ -27,12 +27,12 @@
   },
   "homepage": "https://github.com/IRCraziestTaxi/ts-simple-automapper#readme",
   "devDependencies": {
-    "@types/jasmine": "3.3.12",
-    "jasmine": "3.3.1",
+    "@types/jasmine": "3.4.0",
+    "jasmine": "3.4.0",
     "jasmine-ts": "^0.3.0",
-    "ts-node": "7.0.1",
-    "tslint": "5.14.0",
-    "typescript": "3.3.4000"
+    "ts-node": "8.4.1",
+    "tslint": "5.20.0",
+    "typescript": "3.6.3"
   },
   "dependencies": {
     "reflect-metadata": "^0.1.13"
